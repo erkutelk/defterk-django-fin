@@ -33,9 +33,10 @@ def anasayfa(request):
     for ay in range(1, 13):
         aylik_gelir = Gelir.objects.filter(tarih__year=mevcut_yil, tarih__month=ay).aggregate(Sum('gelir'))['gelir__sum'] or 0
         aylik_gider = Gider.objects.filter(tarih__year=mevcut_yil, tarih__month=ay, gider_durum=True).aggregate(Sum('gider_tutar'))['gider_tutar__sum'] or 0
+        aylik_gider_fatura=Fatura_Bilgileri.objects.filter(tarih__year=mevcut_yil,tarih__month=ay,durum=True).aggregate(Sum('fatura'))['fatura__sum'] or 0
 
         aylik_gelir = float(aylik_gelir) if aylik_gelir else 0.0
-        aylik_gider = float(aylik_gider) if aylik_gider else 0.0
+        aylik_gider = float(aylik_gider)+float(aylik_gider_fatura) if aylik_gider else 0.0
 
         aylik_veriler.append({
             'ay': ay,
